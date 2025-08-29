@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'maven:3.9-amazoncorretto-21'        // pin version
+      image 'maven:3.9-eclipse-temurin-17'        // pin version
       args '--network devops-net -v /var/maven/repo:/root/.m2/repository'
       reuseNode true                              // keeps workspace/cache
     }
