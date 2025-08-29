@@ -1,0 +1,34 @@
+pipeline {
+  agent { docker { image 'maven:3.9-eclipse-temurin-17' args '-v /var/maven/repo:/root/.m2/repository' } }
+
+  environment {
+    SONAR_HOST_URL = credentials('sonar-host-url')    // e.g., http://sonarqube:9000 (string credential)
+    SONAR_TOKEN    = credentials('sonar-token')       // Secret text credential with the token
+  }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Build & Test') {
+      steps { sh 'mvn -B -q -DskipTests=false clean verify' }
+      post {
+        always {
+          junit '**/target/surefire-reports/*.xml'
+        }
+      }
+    }
+
+    stage('SonarQube Analysis') {
+      steps {
+        sh """
+          mvn -B -q sonar:sonar \
+            -Dsonar.projectKey=hello-sonar-jenkins \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.login=${SONAR_TOKEN}
+        """
+      }
+    }
+  }
+}
