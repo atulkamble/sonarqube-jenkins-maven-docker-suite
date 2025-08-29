@@ -1,9 +1,16 @@
 pipeline {
-  agent { docker { image 'maven:amazoncorretto' args '-v /var/maven/repo:/root/.m2/repository' } }
+  agent {
+    docker {
+      image 'maven:3.9-amazoncorretto-21'        // pin version
+      args '--network devops-net -v /var/maven/repo:/root/.m2/repository'
+      reuseNode true                              // keeps workspace/cache
+    }
+  }
 
   environment {
-    SONAR_HOST_URL = credentials('sonar-host-url')    // e.g., http://sonarqube:9000 (string credential)
-    SONAR_TOKEN    = credentials('sonar-token')       // Secret text credential with the token
+    SONAR_HOST_URL = 'http://sonarqube:9000'     // plain env var is fine
+    SONAR_TOKEN    = credentials('sonar-token')  // Secret text credential
+    MAVEN_OPTS     = '-Xmx1024m'
   }
 
   stages {
@@ -12,22 +19,22 @@ pipeline {
     }
 
     stage('Build & Test') {
-      steps { sh 'mvn -B -q -DskipTests=false clean verify' }
+      steps {
+        sh 'mvn -B -DskipTests=false clean verify'
+      }
       post {
-        always {
-          junit '**/target/surefire-reports/*.xml'
-        }
+        always { junit '**/target/surefire-reports/*.xml' }
       }
     }
 
     stage('SonarQube Analysis') {
       steps {
-        sh """
-          mvn -B -q sonar:sonar \
+        sh '''
+          mvn -B sonar:sonar \
             -Dsonar.projectKey=hello-sonar-jenkins \
             -Dsonar.host.url=${SONAR_HOST_URL} \
             -Dsonar.login=${SONAR_TOKEN}
-        """
+        '''
       }
     }
   }
