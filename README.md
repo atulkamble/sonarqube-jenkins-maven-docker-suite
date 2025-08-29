@@ -1,0 +1,1 @@
+# sonarqube-jenkins-maven-docker-suite
