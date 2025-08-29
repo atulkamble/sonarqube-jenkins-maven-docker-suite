@@ -1,4 +1,4 @@
-Awesome—here’s a complete, ready-to-run mini-stack with **SonarQube + PostgreSQL + Jenkins + Maven** via Docker Compose, including an **Amazon Linux one-shot install script**, repo name, project tree, and a **README.md** you can drop straight into GitHub.
+a complete, ready-to-run mini-stack with **SonarQube + PostgreSQL + Jenkins + Maven** via Docker Compose, including an **Amazon Linux one-shot install script**, repo name, project tree, and a **README.md** you can drop straight into GitHub.
 
 ---
 
