@@ -1,5 +1,5 @@
 pipeline {
-  agent { docker { image 'maven:3.9-eclipse-temurin-17' args '-v /var/maven/repo:/root/.m2/repository' } }
+  agent { docker { image 'maven:amazoncorretto' args '-v /var/maven/repo:/root/.m2/repository' } }
 
   environment {
     SONAR_HOST_URL = credentials('sonar-host-url')    // e.g., http://sonarqube:9000 (string credential)
